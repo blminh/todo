@@ -10,16 +10,17 @@ import {
   Modal,
 } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addTodoAction,
+  deleteTodoAction,
+  editTodoAction,
+} from "../redux/action/todoAction";
 
 const TodoList = () => {
   const [form, formModalEditTodo] = Form.useForm();
-
-  const [todoList, setTodoList] = useState([
-    { id: 1, todo: "Watching TV" },
-    { id: 2, todo: "Playing game" },
-    { id: 3, todo: "Reading book" },
-  ]);
-  const [idTodo, setIdTodo] = useState(todoList.length);
+  const todoList = useSelector((state) => state.rootReducer.worker.todoList);
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
   const [fields, setFields] = useState([
@@ -39,24 +40,17 @@ const TodoList = () => {
   }, [selectedTodo]);
 
   const addNewTodo = () => {
-    const { getFieldValue } = form;
+    const { getFieldValue, setFieldValue } = form;
     const todo = getFieldValue("todo");
 
     if (!todo) {
-      message.error("Empty todo!", 0.5);
+      message.error("Empty todo!", 1);
       return;
     }
 
-    let newId = idTodo + 1;
-    setTodoList([
-      ...todoList,
-      {
-        id: newId,
-        todo: todo,
-      },
-    ]);
-    setIdTodo(newId);
-    message.info("Add new todo success!!!", 0.5);
+    dispatch(addTodoAction(todo));
+    setFieldValue("todo", "");
+    message.info("Add new todo success!!!", 1);
   };
 
   const editTodo = (todo) => {
@@ -67,8 +61,7 @@ const TodoList = () => {
   };
 
   const deleteTodo = (todo) => {
-    const newTodoList = todoList.filter((item) => item.id != todo.id);
-    setTodoList(newTodoList);
+    dispatch(deleteTodoAction(todo.id));
     message.info(`Delete todo: ${todo.todo}`, 1);
   };
 
@@ -78,11 +71,12 @@ const TodoList = () => {
   };
 
   const handleOk = () => {
-    const todoListAfterEdit = todoList.filter((item) =>
-      item.id === selectedTodo.id ? (item.todo = selectedTodo.todo) : item.todo
-    );
-    setTodoList(todoListAfterEdit);
-    message.info("Edit todo success!!!", 0.5);
+    dispatch(editTodoAction(selectedTodo));
+    // const todoListAfterEdit = todoList.filter((item) =>
+    //   item.id === selectedTodo.id ? (item.todo = selectedTodo.todo) : item.todo
+    // );
+    // setTodoList(todoListAfterEdit);
+    message.info("Edit todo success!!!", 1);
     setIsModalOpen(false);
   };
 
