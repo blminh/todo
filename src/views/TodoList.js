@@ -30,7 +30,6 @@ const TodoList = () => {
   ]);
 
   useEffect(() => {
-    console.log(">>> Selected todo: ", selectedTodo);
     setFields([
       {
         name: ["todo"],
@@ -40,9 +39,13 @@ const TodoList = () => {
   }, [selectedTodo]);
 
   const addNewTodo = () => {
-    message.info("Add new todo success!!!", 0.5);
     const { getFieldValue } = form;
     const todo = getFieldValue("todo");
+
+    if (!todo) {
+      message.error("Empty todo!", 0.5);
+      return;
+    }
 
     let newId = idTodo + 1;
     setTodoList([
@@ -53,29 +56,34 @@ const TodoList = () => {
       },
     ]);
     setIdTodo(newId);
+    message.info("Add new todo success!!!", 0.5);
   };
 
   const editTodo = (todo) => {
-    message.info("Edit todo success!!!", 0.5);
-    console.log(">>> Edit todo: ", todo);
+    setSelectedTodo({
+      ...selectedTodo,
+      todo: todo[0].value,
+    });
   };
 
   const deleteTodo = (todo) => {
-    message.info("Delete Todo", 0.5);
     const newTodoList = todoList.filter((item) => item.id != todo.id);
     setTodoList(newTodoList);
+    message.info(`Delete todo: ${todo.todo}`, 1);
   };
 
   const showModal = (item) => {
-    console.log(">>> Open modal", item);
     setSelectedTodo({ ...item });
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
-    console.log(">>> Submit edit todo: ");
-    formModalEditTodo.submit();
-    // setIsModalOpen(false);
+    const todoListAfterEdit = todoList.filter((item) =>
+      item.id === selectedTodo.id ? (item.todo = selectedTodo.todo) : item.todo
+    );
+    setTodoList(todoListAfterEdit);
+    message.info("Edit todo success!!!", 0.5);
+    setIsModalOpen(false);
   };
 
   const handleCancel = () => {
