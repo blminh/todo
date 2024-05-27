@@ -1,4 +1,4 @@
-import { createSlice, createReducer } from "@reduxjs/toolkit";
+import { createReducer } from "@reduxjs/toolkit";
 import { ADD_TODO, DELETE_TODO, EDIT_TODO } from "../action/todoAction";
 
 const INITIAL_STATE = {
@@ -9,35 +9,6 @@ const INITIAL_STATE = {
   ],
   todoId: 3,
 };
-
-// const todoSlice = createSlice({
-//   name: "todo",
-//   initialState: INITIAL_STATE,
-//   reducers: {
-//     ADD_TODO: (state, action) => {
-//       const newTodoId = state.todoId + 1;
-//       state.todoList.push({
-//         id: newTodoId,
-//         todo: action.payload,
-//       });
-//       state.todoId = newTodoId;
-//       // return {
-//       //   todoList: state.todoList.concat({
-//       //     id: newTodoId,
-//       //     todo: action.payload,
-//       //   }),
-//       //   todoId: newTodoId,
-//       // };
-//     },
-//     DELETE_TODO: (state, action) => {
-//       console.log(">>> Todo reducer - action: ", action);
-//       return {
-//         ...state,
-//         todoList: state.todoList.filter((item) => item.id !== action.payload),
-//       };
-//     },
-//   },
-// });
 
 const todoReducer = createReducer(INITIAL_STATE, (builder) => {
   builder

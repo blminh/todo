@@ -16,10 +16,12 @@ import {
   deleteTodoAction,
   editTodoAction,
 } from "../redux/action/todoAction";
+import { addTodo, editTodo, deleteTodo } from "../redux/reducer/todoSlice";
 
 const TodoList = () => {
   const [form, formModalEditTodo] = Form.useForm();
-  const todoList = useSelector((state) => state.rootReducer.worker.todoList);
+  // const todoList = useSelector((state) => state.rootReducer.worker.todoList);
+  const todoList = useSelector((state) => state.todoSlice.todoList);
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState({});
@@ -39,7 +41,7 @@ const TodoList = () => {
     ]);
   }, [selectedTodo]);
 
-  const addNewTodo = () => {
+  const handleAddNewTodo = () => {
     const { getFieldValue, setFieldValue } = form;
     const todo = getFieldValue("todo");
 
@@ -48,20 +50,20 @@ const TodoList = () => {
       return;
     }
 
-    dispatch(addTodoAction(todo));
+    dispatch(addTodo(todo));
     setFieldValue("todo", "");
     message.info("Add new todo success!!!", 1);
   };
 
-  const editTodo = (todo) => {
+  const handleEditTodo = (todo) => {
     setSelectedTodo({
       ...selectedTodo,
       todo: todo[0].value,
     });
   };
 
-  const deleteTodo = (todo) => {
-    dispatch(deleteTodoAction(todo.id));
+  const handleDeleteTodo = (todo) => {
+    dispatch(deleteTodo(todo.id));
     message.info(`Delete todo: ${todo.todo}`, 1);
   };
 
@@ -71,11 +73,7 @@ const TodoList = () => {
   };
 
   const handleOk = () => {
-    dispatch(editTodoAction(selectedTodo));
-    // const todoListAfterEdit = todoList.filter((item) =>
-    //   item.id === selectedTodo.id ? (item.todo = selectedTodo.todo) : item.todo
-    // );
-    // setTodoList(todoListAfterEdit);
+    dispatch(editTodo(selectedTodo));
     message.info("Edit todo success!!!", 1);
     setIsModalOpen(false);
   };
@@ -101,7 +99,7 @@ const TodoList = () => {
           <Button
             type="primary"
             onClick={() => {
-              addNewTodo();
+              handleAddNewTodo();
             }}
           >
             Add new todo
@@ -134,7 +132,7 @@ const TodoList = () => {
                   <Button onClick={() => showModal(item)} type="primary" ghost>
                     Edit
                   </Button>,
-                  <Button onClick={() => deleteTodo(item)} danger>
+                  <Button onClick={() => handleDeleteTodo(item)} danger>
                     Delete
                   </Button>,
                 ]}
@@ -159,7 +157,7 @@ const TodoList = () => {
           fields={fields}
           form={formModalEditTodo}
           onFieldsChange={(_, allFields) => {
-            editTodo(allFields);
+            handleEditTodo(allFields);
           }}
           layout="vertical"
           name="edit_todo"
